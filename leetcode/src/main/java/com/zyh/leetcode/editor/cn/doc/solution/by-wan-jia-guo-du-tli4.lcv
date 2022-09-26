@@ -1,0 +1,62 @@
+### 解题思路
+
+直接看代码。
+![1.png](https://pic.leetcode-cn.com/1653271568-uTFHjb-1.png)
+
+### 代码
+
+* java
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<Integer> res = new ArrayList<>();
+    public List<Integer> inorderTraversal(TreeNode root) {
+        dfs(root);
+        return res;
+    }
+    public void dfs(TreeNode root){
+        if(root==null){
+            return;
+        }
+        dfs(root.left);
+        res.add(root.val);
+        dfs(root.right);
+    }
+}
+```
+
+不借助新的函数，原函数递归。
+
+* java
+
+```java
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res= new ArrayList<>();
+        if(root==null){
+            return res;
+        }
+        res.addAll(inorderTraversal(root.left));
+        res.add(root.val);
+        res.addAll(inorderTraversal(root.right));
+        return res;
+    }
+   
+}
+```
+
