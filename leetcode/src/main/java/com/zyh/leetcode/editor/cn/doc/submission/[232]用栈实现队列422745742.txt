@@ -1,0 +1,51 @@
+class MyQueue {
+    int[] inStack = new int[100];
+    int inIndex = 0;
+    int[] outStack = new int[100];
+    int outIndex = 0;
+
+    public MyQueue() {
+    }
+
+    public void push(int x) {
+        inStack[inIndex++] = x;
+    }
+
+    public int pop() {
+        while (inIndex > 0) {
+            outStack[outIndex++] = inStack[--inIndex];
+        }
+        int result = outStack[--outIndex];
+        while (outIndex > 0) {
+            push(outStack[--outIndex]);
+        }
+        return result;
+    }
+
+    public int peek() {
+        while (inIndex > 0) {
+            outStack[outIndex++] = inStack[--inIndex];
+        }
+        int result = outStack[outIndex - 1];
+        while (outIndex > 0) {
+            push(outStack[--outIndex]);
+        }
+        return result;
+    }
+
+    public boolean empty() {
+        return inIndex == 0;
+    }
+}
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.empty();
+ */
+
+//runtime:0 ms
+//memory:39.7 MB

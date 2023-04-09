@@ -1,0 +1,100 @@
+### 解题思路
+
+用两个栈来实现队列，stack1和stack2
+1.入队列放到stack1中
+2.出队列从stack2中出：
+队列为空：返回-1；
+stack2不为空：stack2栈顶元素就是出队列元素
+stack2为空：依次将stack1中的元素放入stack2中，再出stack2的栈顶元素就是队列出对元素
+**图片演示**
+1、2、3入队列：依次存入stack1中
+![image.png](https://pic.leetcode.cn/1679500574-bbpWVG-image.png)
+依次出队：
+出1：stack2为空：依次将stack1中的元素放入stack2中，再出stack2的栈顶元素就是队列出对元素
+![image.png](https://pic.leetcode.cn/1679500777-PBzxWb-image.png)
+出2、3：stack2不为空：stack2栈顶元素就是出队列元素
+![image.png](https://pic.leetcode.cn/1679500932-eISGdV-image.png)
+![image.png](https://pic.leetcode.cn/1679500981-iFvLSi-image.png)
+入队4、5
+![image.png](https://pic.leetcode.cn/1679501117-oLgjKy-image.png)
+出队4
+![image.png](https://pic.leetcode.cn/1679501178-PYdZJT-image.png)
+![image.png](https://pic.leetcode.cn/1679501211-jiqYmC-image.png)
+出队5
+![image.png](https://pic.leetcode.cn/1679501269-FGoPee-image.png)
+
+### 代码
+
+* java
+
+```java
+
+//栈实现队列
+class MyQueue {
+    private Stack<Integer> stack1;
+    private Stack<Integer> stack2;
+
+    public MyQueue() {
+        //创建对象时通过构造方法实例化栈对象
+        stack1 = new Stack<>();
+        stack2 = new Stack<>();
+    }
+
+    //入队
+    public void push(int x) {
+        //入栈都入到stack1中
+        stack1.push(x);
+    }
+
+    //出队：
+    // 1.先判断队列是否为空，为空返回-1
+    // 2.在判断stack2是否为空，不为空出栈，为空将stack1中元素依次入stack2栈中再出栈
+    public int pop() {
+        //队列为空返回-1
+        if(empty()){
+            return -1;
+        }
+        //stack2不为空出栈
+        if(!stack2.isEmpty()){
+            return stack2.pop();
+        }
+        //stack2为空出栈,将stack1中元素入栈2再出栈
+        while(!stack1.isEmpty()){
+            stack2.push(stack1.pop());
+        }
+        return stack2.pop();
+    }
+
+    //与入队相似
+    public int peek() {
+        //队列为空返回-1
+        if(empty()){
+            return -1;
+        }
+        //stack2不为空出栈
+        if(!stack2.isEmpty()){
+            return stack2.peek();
+        }
+        //stack2为空出栈,将stack1中元素入栈2再出栈
+        while(!stack1.isEmpty()){
+            stack2.push(stack1.pop());
+        }
+        return stack2.peek();
+    }
+
+    public boolean empty() {
+        //两个栈都为空则队列为空
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+}
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.empty();
+ */
+```
+

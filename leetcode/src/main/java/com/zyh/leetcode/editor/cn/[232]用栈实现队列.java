@@ -1,0 +1,46 @@
+package com.zyh.leetcode.editor.cn;
+
+import java.util.Stack;
+
+//leetcode submit region begin(Prohibit modification and deletion)
+class MyQueue {
+    Stack<Integer> inStack;
+    Stack<Integer> outStack;
+
+    public MyQueue() {
+        inStack = new Stack();
+        outStack = new Stack();
+    }
+
+    public void push(int x) {
+        inStack.push(x);
+    }
+
+    public int pop() {
+        peek();
+        return outStack.pop();
+    }
+
+    public int peek() {
+        if (outStack.isEmpty()){// 出栈中还有数据，则直接返回，不用将入栈中的数据添加进来，只有出栈中没有元素了，才需要添加新进的元素，
+            while (!inStack.empty()) {
+                outStack.push(inStack.pop());
+            }
+        }
+        return outStack.peek();
+    }
+
+    public boolean empty() {
+        return inStack.empty() && outStack.empty();
+    }
+}
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * boolean param_4 = obj.empty();
+ */
+//leetcode submit region end(Prohibit modification and deletion)
