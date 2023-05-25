@@ -1,0 +1,32 @@
+![image.png](https://pic.leetcode.cn/1675068651-WVQCoc-image.png)
+
+# 解题思路
+
+由题意可易得，从第三行开始，除了开始和末尾的位置上的元素，其余位置上的元素都是由上方的元素以及上方左侧的元素相加得到的，此时就很容易的到从第三行开始状态转移方程为dp[i][j] = dp[i - 1][j] + dp[i - 1][j - 1]，之后就可轻松求解。
+
+# 代码实现
+
+* 
+
+```
+class Solution {
+public:
+    vector<vector<int>> generate(int numRows) {
+        vector<vector<int>> dp(numRows);
+        if (numRows >= 1) dp[0].emplace_back(1);
+        if (numRows >= 2) {
+            dp[1].emplace_back(1);
+            dp[1].emplace_back(1);
+        }
+        for (int i = 2; i < numRows; ++i) {
+            dp[i].emplace_back(1);
+            for (int j = 1; j <= i - 1; ++j) {
+                dp[i].emplace_back(dp[i - 1][j] + dp[i - 1][j - 1]);
+            }
+            dp[i].emplace_back(1);
+        }
+        return dp;
+    }
+};
+```
+

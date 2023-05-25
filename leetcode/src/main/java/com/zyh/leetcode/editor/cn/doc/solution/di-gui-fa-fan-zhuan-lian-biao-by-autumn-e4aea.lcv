@@ -1,0 +1,25 @@
+### 解题思路
+
+每一步都反转两个结点
+例如1-2,2的next结点本来是Null，但head.next.next=head这一步把2的next位置变成了头结点，就相当于此时成了一个环2-1-2，然后再令head.next=Null，相当于1指向none，此时就完成了反转的目的，递归到最后反转也完成了
+
+### 代码
+
+* python3
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        res=self.reverseList(head.next)
+        head.next.next=head
+        head.next=None
+        return res
+```
+

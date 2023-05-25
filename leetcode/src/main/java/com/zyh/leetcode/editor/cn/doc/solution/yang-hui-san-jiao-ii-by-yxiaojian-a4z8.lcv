@@ -1,0 +1,181 @@
+___
+
+### 一、二项式系数与杨辉三角
+
+    百度百科：
+    北宋人贾宪约1050年首先使用“贾宪三角”进行高次开方运算。
+    杨辉，字谦光，南宋时期杭州人。在他1261年所著的《详解***》一书中，辑录了如上所示的三角形数表
+    称之为“开方作法本源”图，并说明此表引自11世纪中叶（约公元1050年）贾宪的《释锁算术》
+    故此，杨辉三角又被称为“贾宪三角”
+
+即杨辉三角可表示$(a+b)^n$的展开式中的各项系数
+![image.png](https://pic.leetcode-cn.com/1613097128-GvHGID-image.png)
+而对于$(a+b)^n$，根据**牛顿二项式定理**，展开有
+$(a+b)^n = C_n^0a^n+C_n^1a^{n-1}b+C_n^2a^{n-2}b^2+...+C_n^{n-2}a^2b^{n-2}+C_n^{n-1}a^1b^{n-1}+C_n^{n}b^{n}$
+则知杨辉三角的第n行第r列的数对应$C_n^r$,即为从n个元素中取r个的组合数
+又组合数计算公式：
+$$
+C_n^r =\frac{A_n^r}{r!}
+= \frac{n!}{r!×(n-r)!}
+= \frac{n!×(n-r+1)}{(r-1)!×r×(n-r+1)!}
+= C_n^{r-1}×\frac{n-r+1}{r}
+$$
+则可有：
+$$
+C_n^r =
+\begin{cases}
+C_n^{r-1}×\frac{n-r+1}{r} & \text{r > 0} \\[2ex]
+1 & \text{r = 0}
+\end{cases}$$
+
+#### 实现
+
+* java
+
+```java
+class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        Integer[] result=new Integer[rowIndex+1];
+        result[rowIndex]=result[0] = 1;
+        for (int i = 1; i <= rowIndex /2; i++) {//对称填写
+             result[rowIndex-i] = result[i] =(int)((long) result[i - 1] * (rowIndex - i + 1) / i);
+        }
+        return Arrays.asList(result);
+    }
+}
+```
+
+___
+
+##### 补一个动态规划的
+
+### 二、动态规划
+
+#### 1. 常规实现
+
+* java
+
+```java
+class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        Integer dp[][]=new Integer[rowIndex+1][rowIndex+1];
+        dp[0][0]=1;
+        for (int i = 1; i <= rowIndex; i++) {
+            dp[i][0]= dp[i][i]=1;
+            for (int j = 1; j <i ; j++) {
+                dp[i][j] = dp[i-1][j-1] +dp[i-1][j];
+            }
+        }
+        return Arrays.asList(dp[rowIndex]);
+    }
+}
+```
+
+#### 2. 空间的初步优化
+
+观察【1】中的状态转移方程如下：
+$\red{dp[i][j] = dp[i-1][j-1] +dp[i-1][j];}$
+则dp第i行的内容只与它的前一行（第i-1行）的值有关，则dp数组无需设置成（k+1)*(k+1)大小的，只需保存上一行的状态即可
+
+##### 容易想到的一种简单实现是：
+
+使用一个数组1*（k+1）的数组保存当前行状态，在刚开始计算下一行时，现在的数组变成了上一行状态的数组，这时我们可以将其拷贝只另一个数组last，然后使用last(上一行）计算当前dp，整体上是使用了2*(k+1)的数组空间
+
+<![21.png](https://pic.leetcode-cn.com/1613135737-EqvRXL-21.png),![22.png](https://pic.leetcode-cn.com/1613135747-RsCFyi-22.png),![23.png](https://pic.leetcode-cn.com/1613135756-sSNJox-23.png),![24.png](https://pic.leetcode-cn.com/1613135761-dDbDxV-24.png),![25.png](https://pic.leetcode-cn.com/1613135766-aNbbSs-25.png),![28.png](https://pic.leetcode-cn.com/1613135773-oLRssb-28.png),![29.png](https://pic.leetcode-cn.com/1613136048-cFhsks-29.png),![30.png](https://pic.leetcode-cn.com/1613136056-QoDCOf-30.png)>
+
+* [sol1-实现1]
+
+```java
+class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        Integer now[]=new Integer[rowIndex+1];
+        now[0]=1;
+        for (int i = 1; i <= rowIndex; i++) {
+            Integer[] last=now.clone();
+            now[0]= now[i]=1;
+            for (int j = 1; j <i ; j++) {
+                now[j] = last[j] +last[j-1];
+            }
+        }
+        return Arrays.asList(now);
+    }
+}
+```
+
+* [sol1-实现2]
+
+```java
+class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        Integer now[]=new Integer[rowIndex+1];
+        Integer last[]=new Integer[rowIndex+1];
+        now[0] = 1;
+        for (int i = 1; i <= rowIndex; i++) {
+            System.arraycopy(now ,0 ,last , 0 ,i);//数据拷贝
+            now[0]= now[i]=1;
+            for (int j = 1; j <i ; j++) {
+                now[j]= last[j] + last[j-1];
+            }
+        }
+        return Arrays.asList(now);
+    }
+}
+```
+
+#### 3.奇偶滚动
+
+在【2】中，使用了2*(k+1)的数组空间，但是每次在计算之前，都需将now数组的数据拷贝至last数组，但其实我们可以将两个数组交替使用，即这次利用数组0给数组1计算值，计算下一行时，数组1成为了上一行的数据，此时再用数组1给数组0计算值，然后再下一次使用数组0给数组1计算值，以此类推
+则两个数组交替使用，我们可以利用下标的**奇偶性**达到这一效果，定义一个2*（k+1)的二维数组
+利用 $i &1$ 计算当前行应该使用的数组下标now( $i & 1 <==>i %2$)
+用1^now(异或）得到另一个数组的下标
+
+* java
+
+```java
+class Solution {
+    public List<Integer> getRow(int rowIndex) {
+        Integer dp[][]=new Integer[2][rowIndex+1];
+        dp[0][0]=1;
+        for (int i = 1; i <= rowIndex; i++) {
+            int now= i & 1 ,last= 1 ^ now;
+            dp[now][0]= dp[now][i]=1;
+            for (int j = 1; j <i ; j++) {
+                dp[now][j]=dp[last][j]+dp[last][j-1];
+            }
+        }
+        return Arrays.asList(dp[rowIndex & 1]);
+    }
+}
+```
+
+#### 4. 原地滚动
+
+之前【2】【3】中，实际上都是使用了2*(k+1)的空间，现在，我们来考虑使用1*(k+1)的空间的情况
+此时考虑状态转移方程应该如下：
+$\red{dp[j](当前行第j个) = dp[j](上一行第j个) + dp[j-1](上一行第j-1个);}$
+即使用1*(k+1)的一维数组滚动计算当前行第j个数dp[j]时，dp[j-1]应该还代表的是上一行的第j-1个的数据，即dp[j-1]应该后于dp[j]被计算，**所以对于列j的遍历顺序应该是从后往前**
+
+    for (int j = i-1; j >0 ; j--) dp[j] = dp[j] +dp[j-1];
+
+##### 例：利用第4行计算第5行
+
+<![1.png](https://pic.leetcode-cn.com/1613134563-tAZgJl-1.png),![2.png](https://pic.leetcode-cn.com/1613134574-vkbIPY-2.png),![3.png](https://pic.leetcode-cn.com/1613134582-lSlwmJ-3.png),![4.png](https://pic.leetcode-cn.com/1613134589-SrVStw-4.png),![5.png](https://pic.leetcode-cn.com/1613134594-pZoxuV-5.png),![6.png](https://pic.leetcode-cn.com/1613134600-wMCeLf-6.png),![7.png](https://pic.leetcode-cn.com/1613134605-SHZePN-7.png),![8.png](https://pic.leetcode-cn.com/1613134610-pfxCHz-8.png),![9.png](https://pic.leetcode-cn.com/1613134615-rfTOHg-9.png),![10.png](https://pic.leetcode-cn.com/1613134621-dfLGOW-10.png)>
+
+* java
+
+```java
+class Solution {
+   public List<Integer> getRow(int rowIndex) {
+        Integer dp[]=new Integer[rowIndex+1];
+        dp[0]=1;
+        for (int i = 1; i <= rowIndex; i++) {
+            dp[0]= dp[i]=1;
+            for (int j = i-1; j >0 ; j--) {
+                dp[j] = dp[j] +dp[j-1];
+            }
+        }
+        return Arrays.asList(dp);
+    }
+}
+```
+

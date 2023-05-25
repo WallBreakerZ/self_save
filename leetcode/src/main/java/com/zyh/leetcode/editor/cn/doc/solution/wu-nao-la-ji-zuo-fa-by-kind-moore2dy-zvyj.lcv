@@ -1,0 +1,16 @@
+![image.png](https://pic.leetcode.cn/1674016592-KSakPN-image.png)
+
+* 
+
+```
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        unordered_map<int, int> hash;
+        for (auto &i : nums) ++hash[i];
+        for (auto &i : hash) if (i.second == 1) return i.first;
+        return -1;
+    }
+};
+```
+

@@ -1,0 +1,56 @@
+### 解题思路
+
+动态规划解题，首先定义数组dp[i][2]
+- dp[i][0]：表示第i+1天结束的时候，如果手里没有持有股票，最大的利润是多少
+- dp[i][1]：表示第i+1天结束的时候，如果手里持有股票，最大的利润是多少
+  在这里我们分别对上述两个进行计算：
+- dp[i][0]
+  这个考虑到两种情况，一是第i天没有持有股票，所以与第i天未持有股票的利润一样，二是第i天持有股票，但是决定在第i+1天卖掉，所以利润为第i天持有股票的利润+第i+1天该股票的价格，两个取最大值即可
+- dp[i][1]
+  这个也考虑到两种情况，一是第i天持有股票，所以与第i天持有股票的利润一样，二是第i天未持有股票，但是决定在第i天买入，所以利润为负值，两个取最大值即可
+
+### 代码
+
+* []
+
+```cpp
+//原始代码
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int length = prices.size();
+        if(length==1) return 0;
+        int dp[length][2];
+        dp[0][0] = 0;
+        dp[0][1] = -prices[0];
+        for(int i=1;i<length;i++)
+        {
+            dp[i][0] = max(dp[i-1][0],dp[i-1][1] + prices[i]);
+            dp[i][1] = max(dp[i-1][1],-prices[i]);
+        }
+        return dp[length-1][0];
+    }
+};
+```
+
+* []
+
+```cpp
+//优化后的代码---用两个变量代替数组
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int length = prices.size();
+        if(length==1) return 0;
+        int stock_unhold = 0;
+        int stock_hold = -prices[0];
+        for(int i=1;i<length;i++)
+        {
+            stock_unhold = max(stock_unhold,stock_hold + prices[i]);
+            stock_hold = max(stock_hold,-prices[i]);
+        }
+        return stock_unhold;
+    }
+};
+```
+

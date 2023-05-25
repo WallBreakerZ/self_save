@@ -1,0 +1,32 @@
+### 解题思路
+
+### 代码
+
+* cpp
+
+```cpp
+class Solution {
+public:
+    void getNum(vector<int> &ans, int rowIndex)
+{
+    vector<int> temp{1};
+    if (rowIndex--)
+    {
+        getNum(ans, rowIndex--);
+        for (int j = 0; j < ans.size() - 1; j++)
+        {
+            temp.push_back(ans[j]+ans[j+1]);
+        }
+        temp.push_back(1);
+        ans = temp;
+    }
+}
+
+    vector<int> getRow(int rowIndex) {
+        vector<int> ans{1};
+        getNum(ans,rowIndex);
+        return ans;
+    }
+};
+```
+
