@@ -12,6 +12,7 @@
         <module>design</module>
         <module>concurrent-technology</module>
         <module>leetcode</module>
+        <module>awazon</module>
     </modules>
 
     <properties>
