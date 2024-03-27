@@ -1,3 +1,8 @@
 /leetcode/target/
 /.idea/
 /*/target
+/awazon/awazon.iml
+/concurrent-technology/concurrent-technology.iml
+/design/design.iml
+/leetcode/leetcode.iml
+/redis/redis.iml
